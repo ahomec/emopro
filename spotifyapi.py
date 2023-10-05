@@ -12,7 +12,7 @@ access_token = sp_oauth.get_access_token()
 # refresh_token = sp_oauth.get_refresh_token()  
   
 sp = Spotify(auth_manager = sp_oauth)
-  
+
 results = sp.search(q='track:dancing', type='track')
 
 print(results)
