@@ -4,6 +4,8 @@ from sklearn.neighbors import KNeighborsClassifier
 
 import pandas as pd
 
+import numpy as np
+
 from keras.models import Sequential
 from keras.layers import Dense
 from scikeras.wrappers import KerasClassifier
@@ -25,11 +27,29 @@ encoder = LabelEncoder()
 encoder.fit(y)
 encoded_y = encoder.transform(y)
 
+# define gaussian kernel
+# from https://github.com/seho0808/knn_gaussian_medium/blob/master/Medium_KNN.ipynb
+def gaussian_kernel(distances):
+    kernel_width = 2 # You have to tune this later
+    weights = np.exp(-(distances**2)/kernel_width)
+    return weights
+
 x_train, x_test, y_train, y_test = train_test_split(x, encoded_y, test_size = 0.3, random_state = 12)
-
 data = list(zip(x, y))
-knn = KNeighborsClassifier(n_neighbors = 4)
 
-knn.fit(x_train, y_train)
-print(knn.score(x_test, y_test)) 
+
+# Default weights
+knn_def = KNeighborsClassifier(n_neighbors = 25, weights = 'distance')
+knn_def.fit(x_train, y_train)
+print(knn_def.score(x_test, y_test)) 
+
+# Inverse weights
+knn_inv = KNeighborsClassifier(n_neighbors = 25)
+knn_inv.fit(x_train, y_train)
+print(knn_inv.score(x_test, y_test)) 
+
+# Gaussian weights
+knn_gk = KNeighborsClassifier(n_neighbors = 25, weights = gaussian_kernel)
+knn_gk.fit(x_train, y_train)
+print(knn_gk.score(x_test,y_test))
 
