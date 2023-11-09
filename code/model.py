@@ -39,17 +39,17 @@ data = list(zip(x, y))
 
 
 # Default weights
-knn_def = KNeighborsClassifier(n_neighbors = 25, weights = 'distance')
+knn_def = KNeighborsClassifier(n_neighbors = 7, weights = 'distance')
 knn_def.fit(x_train, y_train)
 print(knn_def.score(x_test, y_test)) 
 
 # Inverse weights
-knn_inv = KNeighborsClassifier(n_neighbors = 25)
+knn_inv = KNeighborsClassifier(n_neighbors = 7)
 knn_inv.fit(x_train, y_train)
 print(knn_inv.score(x_test, y_test)) 
 
 # Gaussian weights
-knn_gk = KNeighborsClassifier(n_neighbors = 25, weights = gaussian_kernel)
+knn_gk = KNeighborsClassifier(n_neighbors = 7, weights = gaussian_kernel)
 knn_gk.fit(x_train, y_train)
 print(knn_gk.score(x_test,y_test))
 
