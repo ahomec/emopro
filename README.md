@@ -3,6 +3,8 @@ This project utilizes human facial recognition to identify the emotions of the u
 
 We utilize a CNN neural network to build the facial emotion recognition model and k-nearest neighbors classification to build the music emotion classification model.
 
+### Process diagram
+![Process Diagram](imgs/process-diagram.png)
 
 ### Spotify Music Classification Model
 
