@@ -69,6 +69,12 @@ If you encounter any issues or have suggestions for improvement, please open an 
 
 <img width="422" alt="conf" src="https://github.com/ahomec/emopro/assets/107160638/d59a37ad-29fe-4797-ab3c-b5ead2a1fd9a">
 
+## Sample video 
+
+
+https://github.com/ahomec/emopro/assets/107160638/9a040700-c07d-43ad-b4a9-e60596937759
+
+
 
 ### Spotify Music Classification Model
 
