@@ -15,8 +15,10 @@ import tensorflow as tf
 tf.compat.v1.disable_eager_execution
 tf.compat.v1.disable_v2_behavior
 
+# Load data
 df = pd.DataFrame(pd.read_csv("spotify_data.csv"))
 
+# Set target variable
 col_features = df.columns[6:-3]
 x = df[col_features]
 y = df["target"]
@@ -34,6 +36,7 @@ def gaussian_kernel(distances):
     weights = np.exp(-(distances**2)/kernel_width)
     return weights
 
+# Split training and testing data
 x_train, x_test, y_train, y_test = train_test_split(x, encoded_y, test_size = 0.3, random_state = 12)
 data = list(zip(x, y))
 
