@@ -1,0 +1,5 @@
+python3=3.7.0
+tensorflow=2.14.0
+keras=2.15.0
+sklearn=0.22
+numpy=1.26.2
