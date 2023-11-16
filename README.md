@@ -6,6 +6,70 @@ We utilize a CNN neural network to build the facial emotion recognition model an
 ### Process diagram
 ![Process Diagram](imgs/process-diagram.png)
 
+## Emotion Recognition Convolutional Neural Network
+
+# Human Facial Emotion Recognition
+The system is designed to analyze facial expressions in a given video and predict the corresponding emotions. The emotions considered are Angry, Disgust, Fear, Happy, Sad, Surprise, and Neutral.
+
+## Prerequisites
+
+Make sure you have the following installed on your system:
+
+- Python 3.x
+- OpenCV (`pip install opencv-python`)
+- Numpy (`pip install numpy`)
+- TensorFlow (`pip install tensorflow`)
+- Keras (`pip install keras`)
+- Matplotlib (`pip install matplotlib`)
+- Seaborn (`pip install seaborn`)
+- Scikit-Learn (`pip install scikit-learn`)
+
+## Installation
+
+1. Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/aliyaliyuan/emopro
+cd Human_Facial_Emotion_Recognition
+```
+
+2. Download the pre-trained emotion recognition model files:
+   - [facial_expression.json](/path/to/facial_expression.json)
+   - [facial_expression.h5](/path/to/facial_expression.h5)
+   
+   Place these files in the project directory.
+
+3. Download the Haarcascade classifier file for face detection:
+   - [haarcascade_frontalface.xml](/path/to/haarcascade_frontalface.xml)
+   
+   Place this file in the project directory.
+
+## Usage
+
+Run the emotion recognition program:
+
+```bash
+python emo_reco.py
+```
+
+The program will process each frame in the specified video and display the detected emotions. Additionally, it will generate a confusion matrix and a classification report based on the true emotions provided.
+
+## Notes
+
+- The program assumes a video format as input, make sure to customize the video file path in the script accordingly.
+- Adjust the parameters in the `detectMultiScale` function for face detection according to your video characteristics.
+- The true emotions are provided in the script (`true_emotions` list) for evaluation purposes. Adjust it based on your ground truth.
+
+## Training dataset
+https://research.google/resources/datasets/google-facial-expression/ 
+
+If you encounter any issues or have suggestions for improvement, please open an issue or submit a pull request.
+
+## Confusion Matrix with sample video
+
+<img width="422" alt="conf" src="https://github.com/ahomec/emopro/assets/107160638/d59a37ad-29fe-4797-ab3c-b5ead2a1fd9a">
+
+
 ### Spotify Music Classification Model
 
 ### Data
