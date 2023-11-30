@@ -1,10 +1,13 @@
+from matplotlib import pyplot as plt
+from sklearn.discriminant_analysis import StandardScaler
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
 import pandas as pd
-
 import numpy as np
+import seaborn as sns
+from matplotlib import pyplot as plt
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -56,3 +59,21 @@ knn_gk = KNeighborsClassifier(n_neighbors = 7, weights = gaussian_kernel)
 knn_gk.fit(x_train, y_train)
 print(knn_gk.score(x_test,y_test))
 
+# Choosing optimal k value
+# https://www.datacamp.com/tutorial/k-nearest-neighbor-classification-scikit-learn
+
+k_values = [i for i in range (1,31)]
+scores = []
+
+scaler = StandardScaler()
+X = scaler.fit_transform(x)
+
+for k in k_values:
+    knn = KNeighborsClassifier(n_neighbors=k)
+    score = cross_val_score(knn, X, y, cv=5)
+    scores.append(np.mean(score))
+
+
+sns.lineplot(x = k_values, y = scores, marker = 'o')
+plt.xlabel("K Values")
+plt.ylabel("Accuracy Score")
