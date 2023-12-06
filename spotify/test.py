@@ -1,13 +1,7 @@
-import tensorflow as tf
+import os
 
-cifar = tf.keras.datasets.cifar100
-(x_train, y_train), (x_test, y_test) = cifar.load_data()
-model = tf.keras.applications.ResNet50(
-    include_top=True,
-    weights=None,
-    input_shape=(32, 32, 3),
-    classes=100,)
+# get the current working directory
+current_working_directory = os.getcwd()
 
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-model.compile(optimizer="adam", loss=loss_fn, metrics=["accuracy"])
-model.fit(x_train, y_train, epochs=5, batch_size=64)
+# print output to the console
+print(current_working_directory)
