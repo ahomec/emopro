@@ -7,17 +7,33 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load human face cascade file using cv2.CascadeClassifier built-in function
-face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
-
 # Load the face expression trained model
 face_model = model_from_json(open("/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.json", "r").read())
 face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.h5')
 
+# Add Batch Normalization to the model
+face_model_with_batch_norm = tf.keras.Sequential([
+    tf.keras.layers.InputLayer(input_shape=(48, 48, 1)),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(7, activation='softmax')  # Assuming 7 classes for emotions
+])
+
+# Load human face cascade file using cv2.CascadeClassifier built-in function
+face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
+
 # Define expressions
 expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
 
-# Mapping for emotions
+# Define mapping for emotions
 emotion_mapping = {
     'Angry': 0,
     'Disgust': 1,
@@ -31,23 +47,9 @@ emotion_mapping = {
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
-#  ImageDataGenerator with data augmentation 
-datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-    rotation_range=20,
-    width_shift_range=0.2,
-    height_shift_range=0.2,
-    shear_range=0.2,
-    zoom_range=0.2,
-    horizontal_flip=True,
-    fill_mode='nearest'
-)
-
 frame = 0
 detected_emotions = []
 true_labels = []
-
-# Assuming 'face_model' is your existing model
-face_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 while True:
     ret, img = video.read()
@@ -60,12 +62,9 @@ while True:
     faces = face_cascade_classifier.detectMultiScale(gray, 1.3, 5)
 
     for (x, y, w, h) in faces:
+         #region of interest
         if w > 130:
-             #region of interest
             face_detected = img[int(y):int(y + h), int(x):int(x + w)]
-            
-            # Apply data augmentation with random transform 
-            face_detected = datagen.random_transform(face_detected)
             #color to grayscale
             face_detected = cv2.cvtColor(face_detected, cv2.COLOR_BGR2GRAY)
             #resize to 48x48 pixels
@@ -76,9 +75,9 @@ while True:
             img_pixels = np.expand_dims(img_pixels, axis=0)
              #normalization
             img_pixels /= 255
-             #uses trained facial expression recognition model to predict the emotion
-            predictions = face_model.predict(img_pixels)
-            #index referring to the emotion with the highest probability
+            #uses trained facial expression recognition model to predict the emotion
+            predictions = face_model_with_batch_norm.predict(img_pixels)
+             #index referring to the emotion with the highest probability
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
@@ -87,10 +86,8 @@ while True:
             # Append the true label corresponding to the detected emotion
             true_labels.append(emotion_mapping[expressions[max_index]])
 
-#jeeos track of current frame number 
     frame += 1
 
-# if the frame is greater the 227, it breaks
     if frame > 227:
         break
 
@@ -114,3 +111,4 @@ plt.show()
 classification_rep = classification_report(true_labels, detected_emotions, labels=list(range(len(expressions))), target_names=expressions)
 print("Classification Report:")
 print(classification_rep)
+
