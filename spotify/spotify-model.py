@@ -8,12 +8,8 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 import pandas as pd
 import numpy as np
 
-import tensorflow as tf
-tf.compat.v1.disable_eager_execution
-tf.compat.v1.disable_v2_behavior
-
 # Load data
-df = pd.DataFrame(pd.read_csv("~/OneDrive - Creighton University/Year 4/2023 Fall/DSC 599/emopro/spotify/spotify_data.csv"))
+df_test = pd.DataFrame(pd.read_csv("~/OneDrive - Creighton University/Year 4/2023 Fall/DSC 599/emopro/spotify/spotify_data.csv"))
 df_moods = pd.DataFrame(pd.read_csv("~/OneDrive - Creighton University/Year 4/2023 Fall/DSC 599/emopro/spotify/data_moods.csv"))
 
 # Set target variable
@@ -40,23 +36,25 @@ data = list(zip(x, y))
 
 
 # Default weights
-knn_def = KNeighborsClassifier(n_neighbors = 7)
+knn_def = KNeighborsClassifier(n_neighbors = 19)
 knn_def.fit(x_train, y_train)
 print(knn_def.score(x_test, y_test)) 
 
 # Inverse weights
-knn_inv = KNeighborsClassifier(n_neighbors = 7, weights = 'distance')
+knn_inv = KNeighborsClassifier(n_neighbors = 24, weights = 'distance')
 knn_inv.fit(x_train, y_train)
 print(knn_inv.score(x_test, y_test)) 
 
 # Gaussian weights
-knn_gk = KNeighborsClassifier(n_neighbors = 7, weights = gaussian_kernel)
+knn_gk = KNeighborsClassifier(n_neighbors = 19, weights = gaussian_kernel)
 knn_gk.fit(x_train, y_train)
 print(knn_gk.score(x_test,y_test))
 
 # Choosing optimal k value
 # https://www.datacamp.com/tutorial/k-nearest-neighbor-classification-scikit-learn
 
+
+# Default
 k_values = [i for i in range (1,31)]
 scores = []
 
@@ -72,6 +70,7 @@ for k in k_values:
 import seaborn as sns
 from matplotlib import pyplot as plt
 sns.lineplot(x = k_values, y = scores, marker = 'o')
+plt.legend(labels=["default", "inverse", "Gaussian"])
 
 # Inverse
 k_values = [i for i in range (1,31)]
@@ -86,6 +85,7 @@ for k in k_values:
     scores.append(np.mean(score))
 
 sns.lineplot(x = k_values, y = scores, marker = 'o')
+plt.legend(labels=["default", "inverse", "Gaussian"])
 
 # Gaussian
 k_values = [i for i in range (1,31)]
@@ -100,7 +100,8 @@ for k in k_values:
     scores.append(np.mean(score))
 
 sns.lineplot(x = k_values, y = scores, marker = 'o')
+plt.legend(labels=["default", "inverse", "Gaussian"])
+
 plt.xlabel("K Values")
 plt.ylabel("Accuracy Score")
-plt.legend(labels=["default","inverse","Gaussian"])
 # %%
