@@ -72,13 +72,17 @@ If you encounter any issues or have suggestions for improvement, please open an 
 <img width="422" alt="conf" src="https://github.com/ahomec/emopro/assets/107160638/d59a37ad-29fe-4797-ab3c-b5ead2a1fd9a">
 
 ## Sample video 
-
-https://github.com/ahomec/emopro/assets/107160638/90d18a3c-2d44-4f6a-98b7-c02e91ef23cb
+Ground truth value = "Happy" (3)
+https://github.com/ahomec/emopro/assets/107160638/8d1a4313-a708-4171-bffb-4f6a737550ed
 
 
 ## Spotify Music Classification Model
 
 ### Data
+
+
+
+
 
 The dataset used to train the model was found here:
 
