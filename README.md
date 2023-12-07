@@ -103,4 +103,5 @@ Spotify provides metrics for each song that we used to classify emotion.
 ### Results
 
 ![](imgs/k-fold-cv.png)
+
 The optimal parameters for the k-NN model was using inverse weights, with k = 19 and results in an accuracy of 80.10%
