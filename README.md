@@ -73,9 +73,7 @@ If you encounter any issues or have suggestions for improvement, please open an 
 
 ## Sample video 
 
-
-https://github.com/ahomec/emopro/assets/107160638/9a040700-c07d-43ad-b4a9-e60596937759
-
+https://github.com/ahomec/emopro/assets/107160638/90d18a3c-2d44-4f6a-98b7-c02e91ef23cb
 
 
 ## Spotify Music Classification Model
