@@ -3,16 +3,11 @@ import cv2
 from keras.preprocessing import image_dataset_from_directory
 import time
 import tensorflow as tf
-from tensorflow.keras import layers, models
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.models import model_from_json
-
-
-#img = cv2.imread("/Users/aliyahaas/Desktop/IMG_0124.jpeg")  # Replace with the path to your image
-#cv2.imshow("IMG_0124.jpeg", img)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+from sklearn.metrics import confusion_matrix,classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load human face cascade file using cv2.CascadeClassifier built-in function
 face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
@@ -22,12 +17,13 @@ face_model = model_from_json(open("/Users/aliyahaas/Desktop/Human_Facial_Emotion
 face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.h5')
 
 # Define expressions
-expressions = ('Angry:', 'Disgust:', 'Fear:', 'Happy:', 'Sad:', 'Surprise:', 'Neutral:')
+expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
 
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
 frame = 0
+true_labels = []
 detected_emotions = []
 
 while True:
@@ -52,15 +48,13 @@ while True:
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
-            detected_emotions.append(expressions[max_index])
+            detected_emotions.append(max_index)
 
-    frame += 1
+            # Map the true label to an integer using the expressions list
+            true_labels.append(expressions.index('Neutral'))  # Replace 'Neutral' with the actual true label
 
-    if frame > 227:
-        break
-
-video.release()
-cv2.destroyAllWindows()
+# Convert true_labels to a list of integers based on the expressions list
+true_labels = np.array(true_labels, dtype=int)
 
 # After processing all frames, print the detected emotions
 if detected_emotions:
@@ -69,3 +63,21 @@ if detected_emotions:
         print(emotion)
 else:
     print("No emotions detected in the video.")
+
+# After processing all frames, compute the confusion matrix
+conf_matrix = confusion_matrix(true_labels, detected_emotions, labels=list(range(len(expressions))))
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Visualize the confusion matrix with seaborn
+plt.figure(figsize=(10, 8))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=expressions, yticklabels=expressions)
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.show()
+
+# You can also print other metrics such as precision, recall, and F1-score
+classification_rep = classification_report(true_labels, detected_emotions, labels=list(range(len(expressions))), target_names=expressions)
+print("Classification Report:")
+print(classification_rep)
