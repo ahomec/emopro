@@ -25,15 +25,20 @@ expressions = ('Angry:', 'Disgust:', 'Fear:', 'Happy:', 'Sad:', 'Surprise:', 'Ne
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
-# Learning rate scheduler function
+#learning rate scheduler
 def scheduler(epoch, lr):
     if epoch % 10 == 0 and epoch != 0:
         return lr * 0.9
     else:
         return lr
 
-# Assuming 'face_model' is your existing model
-face_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+#adam optimizer with a learning rate of 0.001
+optimizer = Adam(learning_rate=0.001)
+#compile pre-trained model, optimizer set to Adam optimizer, , loss function  set, accuracy is the metric being observed
+face_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+#calling the scheduler
+lr_scheduler = LearningRateScheduler(scheduler)
 
 # Initialize true_labels
 true_labels = []
@@ -53,13 +58,21 @@ while True:
 
     for (x, y, w, h) in faces:
         if w > 130:
+            #region of interest
             face_detected = img[int(y):int(y + h), int(x):int(x + w)]
+            #color to grayscale
             face_detected = cv2.cvtColor(face_detected, cv2.COLOR_BGR2GRAY)
+            #resize to 48x48 pixels
             face_detected = cv2.resize(face_detected, (48, 48))
+            #input form
             img_pixels = img_to_array(face_detected)
+            #adds dimension to array
             img_pixels = np.expand_dims(img_pixels, axis=0)
+            #normalization
             img_pixels /= 255
+            #uses trained facial expression recognition model to predict the emotion
             predictions = face_model.predict(img_pixels)
+             #index referring to the emotion with the highest probability
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
@@ -85,3 +98,4 @@ plt.show()
 classification_rep = classification_report(true_labels, detected_emotions, labels=list(range(len(expressions))), target_names=expressions)
 print("Classification Report:")
 print(classification_rep)
+
