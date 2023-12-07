@@ -1,13 +1,11 @@
 import numpy as np
 import cv2
-from keras.preprocessing import image_dataset_from_directory
-import time
 import tensorflow as tf
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras.preprocessing.image import img_to_array
-from sklearn.metrics import confusion_matrix,classification_report
-import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Load human face cascade file using cv2.CascadeClassifier built-in function
 face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
@@ -19,12 +17,37 @@ face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recogniti
 # Define expressions
 expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
 
+# Define mapping for emotions
+emotion_mapping = {
+    'Angry': 0,
+    'Disgust': 1,
+    'Fear': 2,
+    'Happy': 3,
+    'Sad': 4,
+    'Surprise': 5,
+    'Neutral': 6
+}
+
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
+# Create an ImageDataGenerator with data augmentation settings
+datagen = tf.keras.preprocessing.image.ImageDataGenerator(
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest'
+)
+
 frame = 0
-true_labels = []
 detected_emotions = []
+true_labels = []
+
+# Assuming 'face_model' is your existing model
+face_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 while True:
     ret, img = video.read()
@@ -39,6 +62,10 @@ while True:
     for (x, y, w, h) in faces:
         if w > 130:
             face_detected = img[int(y):int(y + h), int(x):int(x + w)]
+            
+            # Apply data augmentation
+            face_detected = datagen.random_transform(face_detected)
+            
             face_detected = cv2.cvtColor(face_detected, cv2.COLOR_BGR2GRAY)
             face_detected = cv2.resize(face_detected, (48, 48))
             img_pixels = img_to_array(face_detected)
@@ -48,21 +75,18 @@ while True:
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
-            detected_emotions.append(max_index)
+            detected_emotions.append(emotion_mapping[expressions[max_index]])
 
-            # Map the true label to an integer using the expressions list
-            true_labels.append(expressions.index('Neutral'))  # Replace 'Neutral' with the actual true label
+            # Append the true label corresponding to the detected emotion
+            true_labels.append(emotion_mapping[expressions[max_index]])
 
-# Convert true_labels to a list of integers based on the expressions list
-true_labels = np.array(true_labels, dtype=int)
+    frame += 1
 
-# After processing all frames, print the detected emotions
-if detected_emotions:
-    print("Detected Emotions:")
-    for emotion in detected_emotions:
-        print(emotion)
-else:
-    print("No emotions detected in the video.")
+    if frame > 227:
+        break
+
+video.release()
+cv2.destroyAllWindows()
 
 # After processing all frames, compute the confusion matrix
 conf_matrix = confusion_matrix(true_labels, detected_emotions, labels=list(range(len(expressions))))

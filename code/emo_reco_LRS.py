@@ -3,9 +3,12 @@ import cv2
 from keras.preprocessing import image_dataset_from_directory
 import time
 import tensorflow as tf
+from tensorflow.keras import layers, models
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras.preprocessing.image import img_to_array
-from sklearn.metrics import confusion_matrix,classification_report
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import LearningRateScheduler
+from sklearn.metrics import confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -17,13 +20,25 @@ face_model = model_from_json(open("/Users/aliyahaas/Desktop/Human_Facial_Emotion
 face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.h5')
 
 # Define expressions
-expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
+expressions = ('Angry:', 'Disgust:', 'Fear:', 'Happy:', 'Sad:', 'Surprise:', 'Neutral:')
 
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
-frame = 0
+# Learning rate scheduler function
+def scheduler(epoch, lr):
+    if epoch % 10 == 0 and epoch != 0:
+        return lr * 0.9
+    else:
+        return lr
+
+# Assuming 'face_model' is your existing model
+face_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Initialize true_labels
 true_labels = []
+
+# Initialize detected_emotions
 detected_emotions = []
 
 while True:
@@ -50,19 +65,8 @@ while True:
             # Append the detected emotion to the list
             detected_emotions.append(max_index)
 
-            # Map the true label to an integer using the expressions list
-            true_labels.append(expressions.index('Neutral'))  # Replace 'Neutral' with the actual true label
-
-# Convert true_labels to a list of integers based on the expressions list
-true_labels = np.array(true_labels, dtype=int)
-
-# After processing all frames, print the detected emotions
-if detected_emotions:
-    print("Detected Emotions:")
-    for emotion in detected_emotions:
-        print(emotion)
-else:
-    print("No emotions detected in the video.")
+            # Replace 0 with the actual true label for this frame
+            true_labels.append(3)
 
 # After processing all frames, compute the confusion matrix
 conf_matrix = confusion_matrix(true_labels, detected_emotions, labels=list(range(len(expressions))))

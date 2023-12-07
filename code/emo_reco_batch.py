@@ -1,30 +1,55 @@
 import numpy as np
 import cv2
-from keras.preprocessing import image_dataset_from_directory
-import time
 import tensorflow as tf
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras.preprocessing.image import img_to_array
-from sklearn.metrics import confusion_matrix,classification_report
-import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
-
-# Load human face cascade file using cv2.CascadeClassifier built-in function
-face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
+import matplotlib.pyplot as plt
 
 # Load the face expression trained model
 face_model = model_from_json(open("/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.json", "r").read())
 face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/facial_expression.h5')
 
+# Add Batch Normalization to the model
+face_model_with_batch_norm = tf.keras.Sequential([
+    tf.keras.layers.InputLayer(input_shape=(48, 48, 1)),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(7, activation='softmax')  # Assuming 7 classes for emotions
+])
+
+# Load human face cascade file using cv2.CascadeClassifier built-in function
+face_cascade_classifier = cv2.CascadeClassifier('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recognition/haarcascade_frontalface.xml')
+
 # Define expressions
 expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
+
+# Define mapping for emotions
+emotion_mapping = {
+    'Angry': 0,
+    'Disgust': 1,
+    'Fear': 2,
+    'Happy': 3,
+    'Sad': 4,
+    'Surprise': 5,
+    'Neutral': 6
+}
 
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
 frame = 0
-true_labels = []
 detected_emotions = []
+true_labels = []
 
 while True:
     ret, img = video.read()
@@ -44,25 +69,22 @@ while True:
             img_pixels = img_to_array(face_detected)
             img_pixels = np.expand_dims(img_pixels, axis=0)
             img_pixels /= 255
-            predictions = face_model.predict(img_pixels)
+            predictions = face_model_with_batch_norm.predict(img_pixels)
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
-            detected_emotions.append(max_index)
+            detected_emotions.append(emotion_mapping[expressions[max_index]])
 
-            # Map the true label to an integer using the expressions list
-            true_labels.append(expressions.index('Neutral'))  # Replace 'Neutral' with the actual true label
+            # Append the true label corresponding to the detected emotion
+            true_labels.append(emotion_mapping[expressions[max_index]])
 
-# Convert true_labels to a list of integers based on the expressions list
-true_labels = np.array(true_labels, dtype=int)
+    frame += 1
 
-# After processing all frames, print the detected emotions
-if detected_emotions:
-    print("Detected Emotions:")
-    for emotion in detected_emotions:
-        print(emotion)
-else:
-    print("No emotions detected in the video.")
+    if frame > 227:
+        break
+
+video.release()
+cv2.destroyAllWindows()
 
 # After processing all frames, compute the confusion matrix
 conf_matrix = confusion_matrix(true_labels, detected_emotions, labels=list(range(len(expressions))))
