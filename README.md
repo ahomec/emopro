@@ -67,9 +67,8 @@ https://research.google/resources/datasets/google-facial-expression/
 
 If you encounter any issues or have suggestions for improvement, please open an issue or submit a pull request.
 
-## Confusion Matrix with sample video
-
-<img width="422" alt="conf" src="https://github.com/ahomec/emopro/assets/107160638/d59a37ad-29fe-4797-ab3c-b5ead2a1fd9a">
+## Classification Report with sample video
+![og](https://github.com/ahomec/emopro/assets/107160638/b8b3b572-9e2a-47f2-9c44-5a9aac36827c)
 
 ## Sample video 
 Ground truth value = "Happy" (3)
