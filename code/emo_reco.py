@@ -22,29 +22,43 @@ expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral'
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
+
 frame = 0
 true_labels = []
 detected_emotions = []
 
+#Loop reads every single frame until there are no more
 while True:
     ret, img = video.read()
 
     if not ret:
         break
 
+    #each frame is resized
     img = cv2.resize(img, (640, 360))
+    #grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #cascade classifier detets face
     faces = face_cascade_classifier.detectMultiScale(gray, 1.3, 5)
 
     for (x, y, w, h) in faces:
+        #sets threshold for minimum face width is 130 pixels
         if w > 130:
+            #region of interest
             face_detected = img[int(y):int(y + h), int(x):int(x + w)]
+            #color to grayscale
             face_detected = cv2.cvtColor(face_detected, cv2.COLOR_BGR2GRAY)
+            #resize to 48x48 pixels
             face_detected = cv2.resize(face_detected, (48, 48))
+            #input form 
             img_pixels = img_to_array(face_detected)
+            #adds dimension to array
             img_pixels = np.expand_dims(img_pixels, axis=0)
+            #normalization
             img_pixels /= 255
+            #uses trained facial expression recognition model to predict the emotion
             predictions = face_model.predict(img_pixels)
+            ##index referring to the emotion with the highest probability
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
@@ -55,14 +69,6 @@ while True:
 
 # Convert true_labels to a list of integers based on the expressions list
 true_labels = np.array(true_labels, dtype=int)
-
-# After processing all frames, print the detected emotions
-if detected_emotions:
-    print("Detected Emotions:")
-    for emotion in detected_emotions:
-        print(emotion)
-else:
-    print("No emotions detected in the video.")
 
 # After processing all frames, compute the confusion matrix
 conf_matrix = confusion_matrix(true_labels, detected_emotions, labels=list(range(len(expressions))))
