@@ -17,7 +17,7 @@ face_model.load_weights('/Users/aliyahaas/Desktop/Human_Facial_Emotion_Recogniti
 # Define expressions
 expressions = ('Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral')
 
-# Define mapping for emotions
+# Mapping for emotions
 emotion_mapping = {
     'Angry': 0,
     'Disgust': 1,
@@ -31,7 +31,7 @@ emotion_mapping = {
 # Load the video for facial expression recognition
 video = cv2.VideoCapture('/Users/aliyahaas/Desktop/video_1.mp4')
 
-# Create an ImageDataGenerator with data augmentation settings
+#  ImageDataGenerator with data augmentation 
 datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rotation_range=20,
     width_shift_range=0.2,
@@ -61,17 +61,24 @@ while True:
 
     for (x, y, w, h) in faces:
         if w > 130:
+             #region of interest
             face_detected = img[int(y):int(y + h), int(x):int(x + w)]
             
-            # Apply data augmentation
+            # Apply data augmentation with random transform 
             face_detected = datagen.random_transform(face_detected)
-            
+            #color to grayscale
             face_detected = cv2.cvtColor(face_detected, cv2.COLOR_BGR2GRAY)
+            #resize to 48x48 pixels
             face_detected = cv2.resize(face_detected, (48, 48))
+             #input form 
             img_pixels = img_to_array(face_detected)
+             #adds dimension to array
             img_pixels = np.expand_dims(img_pixels, axis=0)
+             #normalization
             img_pixels /= 255
+             #uses trained facial expression recognition model to predict the emotion
             predictions = face_model.predict(img_pixels)
+            #index referring to the emotion with the highest probability
             max_index = np.argmax(predictions[0])
 
             # Append the detected emotion to the list
@@ -80,8 +87,10 @@ while True:
             # Append the true label corresponding to the detected emotion
             true_labels.append(emotion_mapping[expressions[max_index]])
 
+#jeeos track of current frame number 
     frame += 1
 
+# if the frame is greater the 227, it breaks
     if frame > 227:
         break
 
