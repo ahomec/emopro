@@ -13,18 +13,16 @@ Contributors: [@ahomec](https://github.com/ahomec), [@aliyaliyuan](https://githu
 # Human Facial Emotion Recognition
 The system is designed to analyze facial expressions in a given video and predict the corresponding emotions. The emotions considered are Angry, Disgust, Fear, Happy, Sad, Surprise, and Neutral.
 
-## Prerequisites
+## Requirements
 
 Make sure you have the following installed on your system:
 
-- Python 3.x
-- OpenCV (`pip install opencv-python`)
-- Numpy (`pip install numpy`)
-- TensorFlow (`pip install tensorflow`)
-- Keras (`pip install keras`)
-- Matplotlib (`pip install matplotlib`)
-- Seaborn (`pip install seaborn`)
-- Scikit-Learn (`pip install scikit-learn`)
+-python3=3.11.6
+-tensorflow=2.14.0
+-keras=2.15.0
+-scikeras=0.12.0
+-sklearn=1.3.2
+-numpy=1.26.2
 
 ## Installation
 
