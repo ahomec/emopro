@@ -8,8 +8,6 @@ Contributors: [@ahomec](https://github.com/ahomec), [@aliyaliyuan](https://githu
 ### Process diagram
 ![Process Diagram](imgs/process-diagram.png)
 
-## Emotion Recognition Convolutional Neural Network
-
 # Human Facial Emotion Recognition
 The system is designed to analyze facial expressions in a given video and predict the corresponding emotions. The emotions considered are Angry, Disgust, Fear, Happy, Sad, Surprise, and Neutral.
 
