@@ -1,4 +1,4 @@
-[facial_expression.json](https://github.com/ahomec/emopro/files/13608179/facial_expression.json)# Emotion-based music player
+# Emotion-based music player
 This project utilizes human facial recognition to identify the emotions of the user and then recommend them a song that matches using a music emotion classification algorithm trained with Spotify data gathered from the API.
 
 We utilize a CNN neural network to build the facial emotion recognition model and k-nearest neighbors classification to build the music emotion classification model.
@@ -55,7 +55,7 @@ The program will process each frame in the specified video and display the detec
 - The true emotions are provided in the script (`true_emotions` list) for evaluation purposes. Adjust it based on your ground truth.
 
 ## Training dataset
-https://research.google/resources/datasets/google-facial-expression/ 
+The model has been pre-trained. See 'Human_Facial_Emotion_Recognition' folder.
 
 If you encounter any issues or have suggestions for improvement, please open an issue or submit a pull request.
 
