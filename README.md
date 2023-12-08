@@ -17,12 +17,12 @@ The system is designed to analyze facial expressions in a given video and predic
 
 Make sure you have the following installed on your system:
 
- -python3=3.11.6
- -tensorflow=2.14.0
- -keras=2.15.0
- -scikeras=0.12.0
- -sklearn=1.3.2
- -numpy=1.26.2
+numpy==1.21.2
+opencv-python==4.5.3.56
+keras==2.6.0
+tensorflow==2.6.0
+matplotlib==3.4.3
+seaborn==0.11.2
 
 ## Installation
 
